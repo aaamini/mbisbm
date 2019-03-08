@@ -1,6 +1,5 @@
 %% Set-up
 addpath('../common')
-%addpath('..')
 clear all
 K = 10;
 N = 2*[100,400]; %N should be devisable by K
@@ -10,28 +9,23 @@ sig2 = 5*[.1,.1];
 d = [2 2];
 nu = 10;
 mu = zeros(1,sum(d));
-% %[p0, q0]= deal(.7,.1);
-
-%CROSS = 1;
 TAG = '_v2_A';
 
-%% %updating Sigt,mut,mu,Sig,sig2
 
 mylogspace = @(x,y,n) logspace(log10(x),log10(y),n);
 
 lam_len = 12;
 lam_vec = linspace(2,40,lam_len);
-%lam_vec = 2;
 
 beta = 1/7;
 nMC = 5;
-%%
+
 [nmi_cell, miss_cell] = deal( cell(lam_len,nMC) );
 deg_vec = zeros(lam_len,1);   
 
 random_init = @(N,K) mnrnd(1,ones(1,K)/K,N);
 rho = 0.1;
-%methods = {'Init','DC5.simp','DC5.simp.noth','biSC','DC5.simp (biSC)','DC5.simp.noth (biSC)'};
+
 methods = {'~rnd','biSC','SCP', ...
     'mbiSBM (~rnd)','mbiSBM (biSC)','mbiSBM (SCP)', ...
     'mbiSBM (~rnd)','mbiSBM (biSC)','mbiSBM (SCP)'
@@ -41,15 +35,12 @@ methods = {'~rnd','biSC','SCP', ...
 %%
 for r = 1:lam_len
     fprintf('--- r = %3d ---\n', r)
-    %deg_scale = C_vec(r)/compute_avg_deg(N,p0,q0,pr,pr);
-    %[p,q] = deal(deg_scale*p0, deg_scale*q0);
     lambda = lam_vec(r);
     
     temp_deg = 0;
     parfor tmc = 1:nMC
          while 1 % ~SUCCESS
             try
-                %if mod(tmc,5) == 0, fprintf('%3d  ',tmc), end
                 if mod(tmc,10) == 0, fprintf('\n'), end
                 fprintf('.')
 
@@ -57,7 +48,6 @@ for r = 1:lam_len
 
                 %[ A, label_1, label_2, X_1, X_2, v ] = bip_sbm_mix2( N, K, p, q, pr, d, mu ,Sig, sig2 );
                 %[A,label_1,label_2,theta_1,theta_2,expected_A] = bip_dcsbm(N, K, p, q, pr, delta);
-
                 %[A, label, theta, expected_A] = bip_dcsbm2(N, K, p, q, pr, 'theta_low', .1, 'theta_high', .5, 'alpha', .1);
                 [A, label, theta, emp_avg_deg, Q, pr, expected_A] = bip_dcsbm_pareto(N, K, beta, lambda, 'alpha', inf, 'poisson', false);
                 v = zeros(K,d(1)+d(2));
@@ -72,8 +62,6 @@ for r = 1:lam_len
                 tru_lab = BiClustRes.setget_tru_lab(label);  % label is a 1x2 cell array 
                 BiClustRes.setget_comp_miss(false);
 
-                %z1_rnd = rho*label_vec2mat(tru_lab{1}) + (1-rho)*random_init(N(1),K);
-                %z2_rnd = rho*label_vec2mat(tru_lab{2}) + (1-rho)*random_init(N(2),K);
                 [z1_rnd, z2_rnd] = dirchlet_perturb(label_vec2mat(tru_lab{1}) , label_vec2mat(tru_lab{2}) , 1-rho, .5);
 
                 temp_deg = temp_deg + emp_avg_deg;
@@ -162,11 +150,10 @@ set(gcf, 'PaperUnits','inches', 'PaperPosition',[0 0 7 5.5])
 markers = {'o-','^-','*--','s-','d--','x-.'};
 cc = jet(6);
  for k = 1:6
-    h(k) = plot(deg_vec,mean(nmi(:,:,k),2),markers{k});%, 'color',cc(k,:))
+    h(k) = plot(deg_vec,mean(nmi(:,:,k),2),markers{k});
     hold on
 end
 legend(methods,'location','southeast','fontsize',12);
-% set(leg1,'fontsize',14)
 legend('location','southeast')
 legend('boxoff')
 ylabel('Matched NMI'), xlabel('Average degree'), axis tight, ylim([0,1]),
@@ -193,7 +180,6 @@ mthd_idx = [1:3 7:9];
     hold on
 end
 legend(methods,'location','southeast','fontsize',12);
-% set(leg1,'fontsize',14)
 legend('location','southeast')
 legend('boxoff')
 ylabel('Matched NMI'), xlabel('Average degree'), axis tight,  ylim([0,1])
