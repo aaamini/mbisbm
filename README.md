@@ -13,5 +13,5 @@ This can be used as the initialization for the mbisbm or as a standalone algorit
 
 There is also `common/fit_mbiSBM_v2.m` which implements v.2 of the algorithm. This is used for example
 in creating some of the early figures in the paper. You can run `simulations/compare_nmi_sims.m`
-to see it in action. V.2 is more robust to the initial labeling 
+to see it in action. V.2 is more robust to the initial labeling.
 Use this version if you have unreliable/bad initial labels.
