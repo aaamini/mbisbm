@@ -1,7 +1,7 @@
 # mbisbm
 
 
-The code here implements the Matched BIpartite SBM (with node covariates/metadata) algorithms 
+The code here implements algorithms for Matched BIpartite SBM (with node covariates/metadata) as
 described in ... 
 
 The main fitting file is `common/fit_mbisbm.m` which implements v.7 of the algorithm.
